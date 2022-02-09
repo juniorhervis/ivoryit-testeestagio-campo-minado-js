@@ -181,3 +181,10 @@ Abrindo casa: linha(6) / coluna(9)
 000000011
 000000000
 ```
+
+
+Criei duas versões do código, uma que excuta o jogo até encontrar a primeira bomba e então receber o status de game over, isso feito na função playing.
+Já a segunda versão percorre todo o tabuleiro abrindo todas as casas, sendo elas bombas ou não.
+Em ambos os casos a escolha da casa a ser aberta é feita de forma aleatório entreas casas que ainda não foram abertas, com o uso do método Abrir já disponibilizado.
+Uma outra alternativa seria implementar mais próximo do que realmente acontece quando uma pessoa está jogando campo minado, isso seria avaliar o número de bombas na vizinhança e determinar as casas menos prováveis. E isso não foi implementado devido a complexidade de se criar tal algoritmo no tempo disponível.
+Uma das difculdades encontradas no teste foi não poder alterar o script ja disponibilizado como por exempplo adicionar métodos e trabalhar com as variáveis já lá encontradas.

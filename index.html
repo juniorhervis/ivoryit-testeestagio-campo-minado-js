@@ -1,23 +1,148 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-        <script src="js/campo-minado.js"></script>
-    </head>
-    <body>
-        <div id="exibir-execucao"></div>
+  <head>
+    <title></title>
+    <script src="js/campo-minado.js"></script>
+  </head>
+  <body>
+    <div id="exibir-execucao"></div>
 
-        <script>
-            var campoMinado = new CampoMinado();
-            
-            
-            document.getElementById('exibir-execucao').innerHTML += '----------- Início do jogo -----------';
-            document.getElementById('exibir-execucao').innerHTML += '<pre>' + campoMinado.Tabuleiro() + '</pre>';
-            
-            // Realize sua codificação a partir deste ponto, boa sorte!   
+    <script>
+      function minesweeper() {
+        var campoMinado = new CampoMinado();
 
+        this.gameIteration = function (housesCount) {
+          Jogo = this.createTable();
+          closedHouse = this.positionClose(Jogo);
+          console.log(closedHouse);
+          const currentHouse = this.getNumberRandom(closedHouse);
+          campoMinado.Abrir(currentHouse.line, currentHouse.column);
 
-            
-        </script>
-    </body>
+          status = campoMinado.JogoStatus();
+          document.getElementById("exibir-execucao").innerHTML +=
+            "<pre>" +
+            `Abrindo casa: linha(${currentHouse.line}) / coluna(${currentHouse.column})` +
+            "</pre>";
+
+          this.printTable(status);
+
+          housesOpenCount = this.totalHouseOpen(housesCount);
+          console.log(housesOpenCount);
+
+          return { status, currentHouse, housesOpenCount };
+        };
+
+        this.createTable = function () {
+          let tabuleiro = campoMinado.Tabuleiro().split("\r\n");
+          let game = [];
+          for (let lineIndex = 0; lineIndex < tabuleiro.length; lineIndex++) {
+            let line = tabuleiro[lineIndex].split("");
+            game.push(line);
+          }
+
+          return game;
+        };
+
+        this.positionClose = function (Jogo) {
+          var positionColumn = [];
+          var positionLine = [];
+          console.log(Jogo);
+          for (let lineIndex = 0; lineIndex < Jogo.length; lineIndex++) {
+            line = Jogo[lineIndex];
+            for (
+              let columnIndex = 0;
+              columnIndex < line.length;
+              columnIndex++
+            ) {
+              if (line[columnIndex] === "-") {
+                positionColumn.push(columnIndex + 1);
+                positionLine.push(lineIndex + 1);
+                console.log(line[columnIndex]);
+              }
+            }
+          }
+
+          return [positionLine, positionColumn];
+        };
+
+        this.getNumberRandom = function (closedPositions) {
+          const positionNumber = closedPositions[0].length;
+          const randomIndex = Math.floor(Math.random() * positionNumber);
+
+          const line = closedPositions[0][randomIndex];
+          const column = closedPositions[1][randomIndex];
+
+          return { line, column };
+        };
+
+        this.printTable = function (status) {
+          document.getElementById("exibir-execucao").innerHTML +=
+            "<pre>" + campoMinado.Tabuleiro() + "</pre>";
+          if (status == 0) {
+            document.getElementById("exibir-execucao").innerHTML +=
+              "<pre>" +
+              " ---------- Status: Jogo em Aberto ---------" +
+              "</pre>";
+          }
+          if (status == 1) {
+            document.getElementById("exibir-execucao").innerHTML +=
+              "<pre>" + " ---------- Status: Vitória ---------" + "</pre>";
+          }
+          if (status == 2) {
+            document.getElementById("exibir-execucao").innerHTML +=
+              "<pre>" + " ---------- Status: Game Over ---------" + "</pre>";
+          }
+        };
+
+        this.tableLength = function (table) {
+          let lines = table.length;
+          let columns = 0;
+          if (lines > 0) {
+            columns = table[0].length;
+          }
+          return { lines, columns };
+        };
+        this.totalHouseOpen = function (tableLength) {
+          Jogo = this.createTable();
+          closedHouse = this.positionClose(Jogo);
+          let closedHouseount = closedHouse[0].length;
+          return tableLength - closedHouseount;
+        };
+      }
+      document.getElementById("exibir-execucao").innerHTML +=
+        "----------- Status: Início do jogo -----------";
+      var campoMinado = new minesweeper();
+
+      function playing() {
+        Jogo = campoMinado.createTable();
+        let status = 0;
+        const tableShape = campoMinado.tableLength(Jogo);
+        const numberHouses = tableShape.lines * tableShape.columns;
+        while (status == 0) {
+          gameResult = campoMinado.gameIteration(numberHouses);
+          if (gameResult.status == 2) {
+            document.getElementById("exibir-execucao").innerHTML +=
+              "<pre>" +
+              `Game Over: Mina encontrada na posição Linha: ${gameResult.currentHouse.line} || Coluna ${gameResult.currentHouse.column}` +
+              "</pre>";
+          }
+
+          status = gameResult.status;
+        }
+      }
+      playing();
+
+      function openTable() {
+        Jogo = campoMinado.createTable();
+        let opennedCount = 0;
+        const tableShape = campoMinado.tableLength(Jogo);
+        const numberHouses = tableShape.lines * tableShape.columns;
+        while (opennedCount < numberHouses) {
+          gameResult = campoMinado.gameIteration(numberHouses);
+          opennedCount = gameResult.housesOpenCount;
+        }
+      }
+      //openTable();
+    </script>
+  </body>
 </html>
